@@ -1,4 +1,5 @@
 import constants as constants
+import apikey as apikey
 from telegram.ext import * 
 import answers as answers
 
@@ -25,15 +26,19 @@ def handle_message(update, context):
 
     update.message.reply_text(resposta)
 
+def error(update, context):
+    print(f"A seguinte mensagem {update} causou o seguinte erro:\n" +
+    "{context.error}")
+
 def main():
-    updater = Updater(constants.API_KEY, use_context=True)
+    updater = Updater(apikey.API_KEY, use_context=True)
     remetente = updater.dispatcher
 
     remetente.add_handler(CommandHandler("iniciar", start_command))
     remetente.add_handler(CommandHandler("ajuda", helpme_command))
     remetente.add_handler(CommandHandler("sobre", info_command))
     remetente.add_handler(MessageHandler(Filters.text, handle_message))
-    # remetente.add_error_handler()
+    remetente.add_error_handler(error)
 
     updater.start_polling()
     updater.idle()
