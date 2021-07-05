@@ -27,7 +27,7 @@ def starting_message(message):
         "/ajuda\n" +
         "/sobre\n" +
         "/agora\n" +
-        "/cotacao\n"
+        "/cambio\n"
     )
 
 @bot.message_handler(commands=['ajuda'])
@@ -48,7 +48,8 @@ def informing_message(message):
         message.chat.id,
         "BOT Cotação INF032:\n" +
         "Este bot é feito como um trabalho universitário e como um meio de estudo da linguagem de programação Python. Seu objetivo é servir como um centro de informação financeira de forma interativa e conveniente.\n" +
-        "\nNo momento presente este bot apenas informa o câmbio."
+        "\nNo momento presente este bot apenas informa o câmbio e a hora. Mais informações sobre utilidades em /ajuda"
+        "\n\nO código deste bot é aberto e pode ser consultado em: https://github.com/lucaslopez25/cotacao-bot-telegram"
     )
 
 @bot.message_handler(commands=['agora'])
