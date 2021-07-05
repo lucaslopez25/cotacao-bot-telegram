@@ -1,50 +1,55 @@
-import constants as constants
+import telebot
+
 import apikey as apikey
-from telegram.ext import * 
-import answers as answers
+import currencies as currencies
+import datetime, pytz, requests
 
-print ("STARTING BOT...")
+bot = telebot.TeleBot(apikey.API_KEY, parse_mode=None)
 
-def start_command(update, context):
-    update.message.reply_text('Digite algo para começar!')
+@bot.message_handler(commands=['start', 'iniciar'])
+def starting_message(message):
+    bot.reply_to(
+        message, 
+        "Este é o Cotação Bot. Você pode utilizar as seguintes funções:\n" + 
+        "/ajuda\n" +
+        "/sobre\n" +
+        "/agora\n" +
+        "/cotacao\n"
+    )
 
-def helpme_command(update, context):
-    update.message.reply_text('')
+@bot.message_handler(commands=['ajuda'])
+def helping_message(message):
+    bot.reply_to(
+        message,
+        "Manual de Uso BOT COTAÇÃO:\n" +
+        "Opção /iniciar ou /start – exibe o menu inicial para o usuário\n" +
+        "Opção /ajuda – mostra essa mensagem.\n" +
+        "Opção /sobre – informação sobre o bot e o que ele está fazendo no momento.\n" +
+        "Opção /agora – informa o horário e a data de acordo com \n" +
+        "Opção /cotacao – informa a cotação entre duas moedas da escolha do usuário."
+    )
 
-def info_command(update, context):
-    update.message.reply_text("BOT Cotação INF032:\n" + 
-    "Conversor de moedas e variação do valor em tempo real\n" +
-    "Este bot é feito como um trabalho universitário e\n" + 
-    "como um meio de estudo da linguagem de programação Python.\n" + 
-    "Seu objetivo é informar os valores das moedas em relação ao Real\n" + 
-    "e a outras moedas e as variações de valor de forma\n" + 
-    "interativa e conveniente.")
+@bot.message_handler(commands=['sobre'])
+def informing_message(message):
+    bot.reply_to(
+        message,
+        "BOT Cotação INF032:\n" +
+        "Este bot é feito como um trabalho universitário e como um meio de estudo da linguagem de programação Python. Seu objetivo é servir como um centro de informação financeira de forma interativa e conveniente.\n" +
+        "\nNo momento presente este bot apenas informa o câmbio."
+    )
 
-def handle_message(update, context):
-    texto = str(update.message.text).lower()
-    resposta = answers.generic_answers(texto)
+@bot.message_handler(commands=['agora'])
+def timenow_message(message):
 
-    update.message.reply_text(resposta)
+    agora = datetime.datetime.now(pytz.timezone('America/Bahia'))
+    bot.reply_to(
+        message,
+        agora.strftime(
+            "Baseado em Salvador, Bahia, Brasil\n" +
+            "Hora certa: %H:%M\n" +
+            "Data: %d/%m/%y"
+        )
+    )
 
-def error(update, context):
-    print(f"A seguinte mensagem {update} causou o seguinte erro:\n" +
-    "{context.error}")
-
-def main():
-    updater = Updater(apikey.API_KEY, use_context=True)
-    remetente = updater.dispatcher
-
-    remetente.add_handler(CommandHandler("iniciar", start_command))
-    remetente.add_handler(CommandHandler("ajuda", helpme_command))
-    remetente.add_handler(CommandHandler("sobre", info_command))
-    remetente.add_handler(MessageHandler(Filters.text, handle_message))
-    remetente.add_error_handler(error)
-
-    updater.start_polling()
-    updater.idle()
-
-print ("BOT STARTED")
-main()
-
-
-
+print('starting bot...')
+bot.polling()
